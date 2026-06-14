@@ -1,0 +1,88 @@
+{
+  "_description": "This file defines the hardware-inventory schema BuildFindr uses. 'example_inventory' is a sample maker's parts bin. The plan_build tool accepts an inventory in this format and reasons about which project components the user already owns versus still needs to buy.",
+
+  "schema": {
+    "items": [
+      {
+        "id": "string - unique identifier for this item",
+        "name": "string - short description of the part",
+        "category": "string - one of: board, camera, sensor, actuator, power, accessory",
+        "specs": "string (optional) - key specs (e.g. '4GB, 128-core Maxwell')",
+        "notes": "string (optional) - condition, how it's set up, etc."
+      }
+    ]
+  },
+
+  "example_inventory": {
+    "items": [
+      {
+        "id": "inv_001",
+        "name": "NVIDIA Jetson Nano Developer Kit (4GB)",
+        "category": "board",
+        "specs": "4GB RAM, 128-core Maxwell GPU",
+        "notes": "JetPack 4.6 flashed and booting"
+      },
+      {
+        "id": "inv_002",
+        "name": "Raspberry Pi Camera v2 (IMX219, CSI)",
+        "category": "camera",
+        "specs": "8MP, CSI-2 ribbon",
+        "notes": "Works with the Nano CSI port"
+      },
+      {
+        "id": "inv_003",
+        "name": "Logitech C920 USB webcam",
+        "category": "camera",
+        "specs": "1080p USB",
+        "notes": null
+      },
+      {
+        "id": "inv_004",
+        "name": "64GB microSD card (UHS-I)",
+        "category": "accessory",
+        "specs": "Class 10, A1",
+        "notes": null
+      },
+      {
+        "id": "inv_005",
+        "name": "5V/4A barrel-jack power supply",
+        "category": "power",
+        "specs": "5V 4A, 5.5mm barrel",
+        "notes": "J48 power-select jumper set for barrel-jack mode"
+      },
+      {
+        "id": "inv_006",
+        "name": "Intel RealSense D435i depth camera",
+        "category": "sensor",
+        "specs": "Stereo depth + IMU, USB 3",
+        "notes": null
+      },
+      {
+        "id": "inv_007",
+        "name": "SG90 micro servos (x4)",
+        "category": "actuator",
+        "specs": "9g, PWM",
+        "notes": null
+      },
+      {
+        "id": "inv_008",
+        "name": "Jumper wires + half-size breadboard",
+        "category": "accessory",
+        "specs": "M-F and M-M assortment",
+        "notes": null
+      },
+      {
+        "id": "inv_009",
+        "name": "RPLiDAR A1M8 360-degree scanner",
+        "category": "sensor",
+        "specs": "12m range, USB adapter",
+        "notes": null
+      }
+    ]
+  },
+
+  "empty_inventory": {
+    "_note": "Use this as the starting template for a new maker with no parts entered yet.",
+    "items": []
+  }
+}

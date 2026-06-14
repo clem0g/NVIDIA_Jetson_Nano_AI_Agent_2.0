@@ -1,83 +1,48 @@
 """
-Utility functions for loading the mock listings dataset and wardrobe schema.
-Use these in your tool implementations to access the data without re-reading
-the files each time.
+utils/data_loader.py
+
+Helper functions for loading BuildFindr's mock data. Use these rather than
+re-reading the JSON files by hand.
+
+    load_projects()          -> list[dict]   the project catalog
+    get_example_inventory()  -> dict         a populated sample inventory
+    get_empty_inventory()    -> dict         an empty inventory (new user)
 """
 
 import json
-import os
-from typing import Optional
+from pathlib import Path
 
-# Resolve the path to the data directory relative to this file
-_DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
+DATA_DIR = Path(__file__).resolve().parent.parent / "data"
+PROJECTS_PATH = DATA_DIR / "projects.json"
+INVENTORY_PATH = DATA_DIR / "inventory_schema.json"
 
 
-def load_listings() -> list[dict]:
-    """
-    Load all mock listings from the dataset.
-
-    Returns:
-        A list of listing dictionaries. Each listing has the following fields:
-        - id (str)
-        - title (str)
-        - description (str)
-        - category (str): one of tops, bottoms, outerwear, shoes, accessories
-        - style_tags (list[str])
-        - size (str)
-        - condition (str): excellent, good, or fair
-        - price (float)
-        - colors (list[str])
-        - brand (str or None)
-        - platform (str): depop, thredUp, or poshmark
-    """
-    path = os.path.join(_DATA_DIR, "listings.json")
-    with open(path, "r", encoding="utf-8") as f:
+def load_projects() -> list[dict]:
+    """Return the full list of project dicts from data/projects.json."""
+    with open(PROJECTS_PATH, encoding="utf-8") as f:
         return json.load(f)
 
 
-def load_wardrobe_schema() -> dict:
-    """
-    Load the wardrobe schema, including the example wardrobe and empty template.
-
-    Returns:
-        A dictionary containing:
-        - schema: the field definitions for a wardrobe item
-        - example_wardrobe: a sample wardrobe with 10 items
-        - empty_wardrobe: a starting template for a new user
-    """
-    path = os.path.join(_DATA_DIR, "wardrobe_schema.json")
-    with open(path, "r", encoding="utf-8") as f:
+def _load_inventory_file() -> dict:
+    with open(INVENTORY_PATH, encoding="utf-8") as f:
         return json.load(f)
 
 
-def get_example_wardrobe() -> dict:
-    """
-    Convenience function — returns just the example wardrobe items list.
-
-    Returns:
-        A wardrobe dict with an 'items' key containing a list of wardrobe items.
-    """
-    schema = load_wardrobe_schema()
-    return schema["example_wardrobe"]
+def get_example_inventory() -> dict:
+    """Return the sample inventory dict ({'items': [...]})."""
+    return _load_inventory_file()["example_inventory"]
 
 
-def get_empty_wardrobe() -> dict:
-    """
-    Convenience function — returns an empty wardrobe template.
-
-    Returns:
-        A wardrobe dict with an empty 'items' list.
-    """
-    schema = load_wardrobe_schema()
-    return schema["empty_wardrobe"]
+def get_empty_inventory() -> dict:
+    """Return an empty inventory dict ({'items': []}) for new-user testing."""
+    return _load_inventory_file()["empty_inventory"]
 
 
-# --- Quick sanity check ---
 if __name__ == "__main__":
-    listings = load_listings()
-    print(f"Loaded {len(listings)} listings.")
-    print(f"First listing: {listings[0]['title']} — ${listings[0]['price']}")
-
-    wardrobe = get_example_wardrobe()
-    print(f"\nExample wardrobe has {len(wardrobe['items'])} items.")
-    print(f"First item: {wardrobe['items'][0]['name']}")
+    projects = load_projects()
+    print(f"Loaded {len(projects)} projects.")
+    difficulties = sorted({p["difficulty"] for p in projects})
+    print(f"Difficulties present: {difficulties}")
+    example = get_example_inventory()
+    print(f"Example inventory: {len(example['items'])} items.")
+    print(f"Empty inventory:   {len(get_empty_inventory()['items'])} items.")

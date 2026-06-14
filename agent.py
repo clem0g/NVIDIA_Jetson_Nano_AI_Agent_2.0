@@ -1,123 +1,217 @@
 """
 agent.py
 
-The FitFindr planning loop. Orchestrates the three tools in response to a
-natural language user query, passing state between them via a session dict.
+The BuildFindr planning loop. Orchestrates the four tools in response to a
+natural-language query, passing state between them via a session dict.
 
-Complete tools.py and test each tool in isolation before implementing this file.
-
-Usage (once implemented):
+Usage:
     from agent import run_agent
-    from utils.data_loader import get_example_wardrobe
+    from utils.data_loader import get_example_inventory
 
     result = run_agent(
-        query="vintage graphic tee under $30, size M",
-        wardrobe=get_example_wardrobe(),
+        query="object detection camera project under $200",
+        inventory=get_example_inventory(),
     )
-    print(result["fit_card"])
+    print(result["build_card"])
     print(result["error"])   # None on success
 """
 
-from tools import search_listings, suggest_outfit, create_fit_card
+import re
+
+from tools import search_projects, plan_build, create_build_card, consult_docs
 
 
-# ── session state ─────────────────────────────────────────────────────────────
+# -- session state -------------------------------------------------------------
 
-def _new_session(query: str, wardrobe: dict) -> dict:
-    """
-    Initialize and return a fresh session dict for one user interaction.
-
-    The session dict is the single source of truth for everything that happens
-    during a run — it stores the original query, parsed parameters, tool results,
-    and any error that caused early termination.
-
-    You may add fields to this dict as needed for your implementation.
-    """
+def _new_session(query: str, inventory: dict) -> dict:
+    """Initialize a fresh session dict for one user interaction."""
     return {
-        "query": query,              # original user query
-        "parsed": {},                # extracted description / size / max_price
-        "search_results": [],        # list of matching listing dicts
-        "selected_item": None,       # top result, passed into suggest_outfit
-        "wardrobe": wardrobe,        # user's wardrobe dict
-        "outfit_suggestion": None,   # string returned by suggest_outfit
-        "fit_card": None,            # string returned by create_fit_card
-        "error": None,               # set if the interaction ended early
+        "query": query,             # original user query
+        "parsed": {},               # extracted description / difficulty / max_cost
+        "search_results": [],       # list of matching project dicts
+        "selected_project": None,   # top result, passed into plan_build
+        "inventory": inventory,     # user's hardware inventory dict
+        "build_plan": None,         # string returned by plan_build
+        "docs": None,               # dict returned by consult_docs (optional)
+        "build_card": None,         # string returned by create_build_card
+        "adjustments": [],          # notes about any filters we loosened
+        "error": None,              # set if the interaction ended early
     }
 
 
-# ── planning loop ─────────────────────────────────────────────────────────────
+# -- query parsing -------------------------------------------------------------
 
-def run_agent(query: str, wardrobe: dict) -> dict:
+_DIFFICULTY_KEYWORDS = [
+    (("expert",), "Expert"),
+    (("advanced", "difficult", "hard", "challenging"), "Difficult"),
+    (("moderate", "intermediate"), "Moderate"),
+    (("easy", "simple", "beginner", "starter"), "Easy"),
+]
+
+
+def _parse_query(query: str) -> dict:
     """
-    Main agent entry point. Runs the FitFindr planning loop for a single
-    user interaction and returns the completed session dict.
-
-    Args:
-        query:    Natural language user request
-                  (e.g., "vintage graphic tee under $30, size M")
-        wardrobe: User's wardrobe dict — use get_example_wardrobe() or
-                  get_empty_wardrobe() from utils/data_loader.py
-
-    Returns:
-        The session dict after the interaction completes. Check session["error"]
-        first — if it is not None, the interaction ended early and the other
-        output fields (outfit_suggestion, fit_card) will be None.
-
-    TODO — implement this function using the planning loop you designed in planning.md:
-
-        Step 1: Initialize the session with _new_session().
-
-        Step 2: Parse the user's query to extract a description, size, and
-                max_price. You can use regex, string splitting, or ask the LLM
-                to parse it — document your choice in planning.md.
-                Store the result in session["parsed"].
-
-        Step 3: Call search_listings() with the parsed parameters.
-                Store results in session["search_results"].
-                If no results: set session["error"] to a helpful message and
-                return the session early. Do NOT proceed to suggest_outfit
-                with empty input.
-
-        Step 4: Select the item to use (e.g., the top result).
-                Store it in session["selected_item"].
-
-        Step 5: Call suggest_outfit() with the selected item and wardrobe.
-                Store the result in session["outfit_suggestion"].
-
-        Step 6: Call create_fit_card() with the outfit suggestion and selected item.
-                Store the result in session["fit_card"].
-
-        Step 7: Return the session.
-
-    Before writing code, complete the Planning Loop and State Management sections
-    of planning.md — your implementation should match what you described there.
+    Pull a description, difficulty, and max_cost out of a free-text query using
+    simple regex/keyword rules (deterministic -- no LLM needed for parsing).
     """
-    # TODO: implement the planning loop
-    session = _new_session(query, wardrobe)
-    session["error"] = "Planning loop not yet implemented."
+    text = query or ""
+    low = text.lower()
+
+    # max_cost: "$200", "under 200", "below $150", "up to 50 dollars"
+    max_cost = None
+    m = re.search(r"\$\s*(\d+(?:\.\d+)?)", low)
+    if not m:
+        m = re.search(
+            r"(?:under|below|less than|max|up to|cheaper than)\s*\$?\s*(\d+(?:\.\d+)?)",
+            low,
+        )
+    if m:
+        max_cost = float(m.group(1))
+
+    # difficulty: first keyword group that appears wins
+    difficulty = None
+    for words, label in _DIFFICULTY_KEYWORDS:
+        if any(re.search(rf"\b{w}\b", low) for w in words):
+            difficulty = label
+            break
+
+    # description: strip the price phrase so it doesn't pollute keyword scoring
+    description = re.sub(
+        r"(?:under|below|less than|max|up to|cheaper than)?\s*\$?\s*\d+(?:\.\d+)?\s*(?:dollars|usd|bucks)?",
+        " ",
+        text,
+        flags=re.I,
+    )
+    description = re.sub(r"\s+", " ", description).strip()
+
+    return {"description": description, "difficulty": difficulty, "max_cost": max_cost}
+
+
+# -- planning loop -------------------------------------------------------------
+
+def run_agent(query: str, inventory: dict) -> dict:
+    """
+    Run the BuildFindr planning loop for a single interaction.
+
+    Branching logic:
+      1. Parse the query into description / difficulty / max_cost.
+      2. search_projects(...). If it returns nothing AND a filter was applied,
+         retry once with the filters removed (and record the adjustment). If it
+         is still empty, set session["error"] and return early.
+      3. selected_project = results[0].
+      4. plan_build(selected_project, inventory) -> build_plan.
+      5. consult_docs(...) to (optionally) ground setup detail from Project 1.
+         Non-fatal: failure just leaves docs marked unavailable.
+      6. create_build_card(build_plan, selected_project) -> build_card.
+      7. Return the session.
+
+    Returns the session dict. Check session["error"] first -- if it is not None,
+    the run ended early and build_plan / build_card will be None.
+    """
+    session = _new_session(query, inventory)
+
+    if not query or not query.strip():
+        session["error"] = "Please describe the kind of Jetson project you want to build."
+        return session
+
+    parsed = _parse_query(query)
+    session["parsed"] = parsed
+
+    # Step 1: search (infra errors handled here so a bad call can't crash the app).
+    try:
+        results = search_projects(
+            parsed["description"], parsed["difficulty"], parsed["max_cost"]
+        )
+    except Exception as e:
+        session["error"] = f"Search failed unexpectedly ({type(e).__name__}). Please try again."
+        return session
+
+    # Step 2: retry-with-loosened-constraints fallback.
+    if not results:
+        had_filters = parsed["difficulty"] is not None or parsed["max_cost"] is not None
+        if had_filters:
+            try:
+                loosened = search_projects(parsed["description"], None, None)
+            except Exception:
+                loosened = []
+            if loosened:
+                dropped = []
+                if parsed["difficulty"] is not None:
+                    dropped.append(f"difficulty '{parsed['difficulty']}'")
+                if parsed["max_cost"] is not None:
+                    dropped.append(f"the ${parsed['max_cost']:.0f} budget cap")
+                session["adjustments"].append(
+                    "No exact match, so I dropped " + " and ".join(dropped)
+                    + " and searched on your keywords alone."
+                )
+                results = loosened
+
+    if not results:
+        desc = parsed["description"] or "that"
+        session["error"] = (
+            f"I couldn't find a Jetson project matching '{desc}'. "
+            "Try broader keywords like 'object detection', 'robot', 'camera', or 'LiDAR'."
+        )
+        return session
+
+    # Step 3: select the top result and store it in session state.
+    selected = results[0]
+    session["search_results"] = results
+    session["selected_project"] = selected
+
+    # Step 4: plan the build against the user's inventory.
+    try:
+        session["build_plan"] = plan_build(selected, session["inventory"])
+    except Exception as e:
+        session["error"] = (
+            f"I found '{selected['title']}' but couldn't generate a build plan "
+            f"({type(e).__name__}). Check your GROQ_API_KEY and try again."
+        )
+        return session
+
+    # Step 5: (optional) ground setup detail in the Project 1 knowledge base.
+    try:
+        session["docs"] = consult_docs(
+            f"How do I set up and build the {selected['title']} project on a Jetson?"
+        )
+    except Exception:
+        session["docs"] = None  # never fatal
+
+    # Step 6: turn the plan into a shareable build card.
+    try:
+        session["build_card"] = create_build_card(session["build_plan"], selected)
+    except Exception as e:
+        session["error"] = (
+            f"The build plan is ready but the build card failed ({type(e).__name__})."
+        )
+        return session
+
     return session
 
 
-# ── CLI test ──────────────────────────────────────────────────────────────────
+# -- CLI test ------------------------------------------------------------------
 
 if __name__ == "__main__":
-    from utils.data_loader import get_example_wardrobe, get_empty_wardrobe
+    from utils.data_loader import get_example_inventory, get_empty_inventory
 
-    print("=== Happy path: graphic tee ===\n")
-    session = run_agent(
-        query="looking for a vintage graphic tee under $30",
-        wardrobe=get_example_wardrobe(),
+    print("=== Happy path: object detection camera ===\n")
+    s = run_agent(
+        query="object detection camera project under $200",
+        inventory=get_example_inventory(),
     )
-    if session["error"]:
-        print(f"Error: {session['error']}")
+    if s["error"]:
+        print(f"Error: {s['error']}")
     else:
-        print(f"Found: {session['selected_item']['title']}")
-        print(f"\nOutfit: {session['outfit_suggestion']}")
-        print(f"\nFit card: {session['fit_card']}")
+        print(f"Selected: {s['selected_project']['title']}")
+        if s["adjustments"]:
+            print(f"Adjustments: {s['adjustments']}")
+        print(f"\nBuild plan:\n{s['build_plan']}")
+        print(f"\nBuild card:\n{s['build_card']}")
 
     print("\n\n=== No-results path ===\n")
-    session2 = run_agent(
-        query="designer ballgown size XXS under $5",
-        wardrobe=get_example_wardrobe(),
+    s2 = run_agent(
+        query="underwater sonar submarine drone under $20",
+        inventory=get_example_inventory(),
     )
-    print(f"Error message: {session2['error']}")
+    print(f"Error message: {s2['error']}")
+    print(f"build_card is None: {s2['build_card'] is None}")

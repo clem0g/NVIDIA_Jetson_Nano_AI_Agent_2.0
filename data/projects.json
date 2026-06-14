@@ -1,0 +1,242 @@
+[
+  {
+    "id": "p_001",
+    "title": "Make a Security Camera System in 30 Minutes or Less",
+    "description": "Turn a Jetson and a spare webcam into a motion-detecting home surveillance system using free software and a Docker container.",
+    "difficulty": "Easy",
+    "components": ["Jetson Nano", "USB webcam", "microSD card", "5V power supply"],
+    "est_cost": 130.0,
+    "skill_tags": ["computer-vision", "security", "docker", "beginner"],
+    "source_url": "https://www.electromaker.io/project/view/make-a-security-camera-system-in-30-minutes-or-less"
+  },
+  {
+    "id": "p_002",
+    "title": "Capture Fast-Moving Objects with a Global Shutter Camera",
+    "description": "Use the Onsemi AR0234CS global shutter camera module at up to 120 FPS on a Jetson Nano to capture fast motion without blur.",
+    "difficulty": "Easy",
+    "components": ["Jetson Nano", "AR0234CS global shutter camera", "CSI ribbon cable", "microSD card"],
+    "est_cost": 180.0,
+    "skill_tags": ["camera", "global-shutter", "computer-vision", "imaging"],
+    "source_url": "https://www.electromaker.io/project/view/to-capture-fast-moving-objects-images"
+  },
+  {
+    "id": "p_003",
+    "title": "Getting Started with the Jetson Xavier NX Developer Kit",
+    "description": "A first-boot walkthrough for the Jetson Xavier NX: flashing JetPack, headless setup, and running your first AI demo.",
+    "difficulty": "Moderate",
+    "components": ["Jetson Xavier NX Developer Kit", "microSD card", "5V/4A power supply", "USB keyboard"],
+    "est_cost": 480.0,
+    "skill_tags": ["setup", "getting-started", "jetpack", "flashing"],
+    "source_url": "https://www.electromaker.io/project/view/getting-started-with-nvidia-jetson-xavier-nx-developer-kit-2"
+  },
+  {
+    "id": "p_004",
+    "title": "Safety Helmet Detection System with YOLOv7",
+    "description": "Train a 3-class safety helmet detector and deploy it on a Jetson board with YOLOv7 accelerated by TensorRT.",
+    "difficulty": "Moderate",
+    "components": ["Jetson Nano", "CSI camera", "microSD card"],
+    "est_cost": 160.0,
+    "skill_tags": ["object-detection", "yolov7", "tensorrt", "safety"],
+    "source_url": "https://www.electromaker.io/project/view/safety-helmet-detection-system-based-on-yolov7-algorithm"
+  },
+  {
+    "id": "p_005",
+    "title": "TinyML FOMO: Rice Variety Detection with Edge Impulse",
+    "description": "Real-time detection of rice seed varieties using Edge Impulse's FOMO machine-vision model running on constrained hardware.",
+    "difficulty": "Moderate",
+    "components": ["Jetson Nano", "USB camera", "microSD card"],
+    "est_cost": 130.0,
+    "skill_tags": ["tinyml", "edge-impulse", "fomo", "classification"],
+    "source_url": "https://www.electromaker.io/project/view/tinyml-fomo-detection-of-rice-varieties-using-edge-impulse"
+  },
+  {
+    "id": "p_006",
+    "title": "Object Tracking on myCobot 280 Jetson Nano",
+    "description": "Control a 6-DOF robotic arm with object detection and tracking using OpenCV on the Jetson-powered myCobot 280.",
+    "difficulty": "Moderate",
+    "components": ["myCobot 280 (Jetson Nano)", "2MP camera flange", "camera module"],
+    "est_cost": 750.0,
+    "skill_tags": ["robotic-arm", "object-tracking", "opencv", "robotics"],
+    "source_url": "https://www.electromaker.io/project/view/object-tracking-on-mycobot-280-jetson-nano-a-case-study"
+  },
+  {
+    "id": "p_007",
+    "title": "LiDAR Integration with ROS 2 Foxy",
+    "description": "Bring up an RPLiDAR on a Jetson with ROS 2 Foxy inside a Docker container and visualize the scan data.",
+    "difficulty": "Moderate",
+    "components": ["Jetson Nano", "RPLiDAR A1/A2", "microSD card"],
+    "est_cost": 320.0,
+    "skill_tags": ["lidar", "ros2", "docker", "slam"],
+    "source_url": "https://www.electromaker.io/project/view/lidar-integration-with-ros-2-foxy-on-the-nvidia-jetson-board"
+  },
+  {
+    "id": "p_008",
+    "title": "Building a Map using LiDAR with ROS Melodic and Hector SLAM",
+    "description": "Install ROS Melodic on a Jetson Nano and build a 2D occupancy map of a room using an RPLiDAR and Hector SLAM.",
+    "difficulty": "Difficult",
+    "components": ["Jetson Nano", "RPLiDAR A2M8", "microSD card"],
+    "est_cost": 380.0,
+    "skill_tags": ["lidar", "ros", "hector-slam", "mapping"],
+    "source_url": "https://www.electromaker.io/project/view/building-a-map-using-lidar-with-ros-melodic-on-jetson-nano"
+  },
+  {
+    "id": "p_009",
+    "title": "Rescue Bot: Autonomous Disaster-Response Rover",
+    "description": "A skid-steer ground rover that navigates rough terrain, maps with LiDAR, fuses IMU and wheel odometry, and reads environmental gas sensors. Uses ROS for autonomous navigation.",
+    "difficulty": "Difficult",
+    "components": ["NVIDIA Jetson Nano Developer Kit", "Intel RealSense D435i", "RPLiDAR A2M8", "Arduino Mega 2560", "DC servo motors and drivers", "11.1V LiPo battery"],
+    "est_cost": 1200.0,
+    "skill_tags": ["robotics", "ros", "slam", "autonomous-navigation", "sensor-fusion"],
+    "source_url": "https://www.electromaker.io/project/view/rescue-bot"
+  },
+  {
+    "id": "p_010",
+    "title": "Running a ChatGPT-like LLM (LLaMA2) on a Jetson Cluster",
+    "description": "Stand up a small Jetson cluster and run a LLaMA2 large language model for local, private ChatGPT-style inference.",
+    "difficulty": "Difficult",
+    "components": ["2x Jetson Xavier NX / Orin", "gigabit network switch", "microSD cards", "power supplies"],
+    "est_cost": 1500.0,
+    "skill_tags": ["llm", "llama2", "cluster", "inference"],
+    "source_url": "https://www.electromaker.io/project/view/running-a-chatgpt-like-llm-llama2-on-a-nvidia-jetson-cluster"
+  },
+  {
+    "id": "p_011",
+    "title": "Image Captioning for the Visually Impaired",
+    "description": "An accessibility device that captions the scene in front of a camera and reads it aloud for blind and visually impaired users.",
+    "difficulty": "Difficult",
+    "components": ["Jetson Nano", "camera module", "speaker", "microSD card"],
+    "est_cost": 200.0,
+    "skill_tags": ["image-captioning", "accessibility", "deep-learning", "text-to-speech"],
+    "source_url": "https://www.electromaker.io/project/view/image-captioning-for-the-visually-impaired-and-blind-people"
+  },
+  {
+    "id": "p_012",
+    "title": "Fire Detector using Omniverse Replicator and Arduino Nicla",
+    "description": "A proof-of-concept TinyML fire detector trained on a synthetic dataset generated with NVIDIA Omniverse Replicator.",
+    "difficulty": "Difficult",
+    "components": ["Arduino Nicla Vision", "Jetson (synthetic data generation)", "Omniverse workstation"],
+    "est_cost": 250.0,
+    "skill_tags": ["tinyml", "synthetic-data", "omniverse", "fire-detection"],
+    "source_url": "https://www.electromaker.io/project/view/fire-detector-using-omniverse-replicator-and-arduino-nicla"
+  },
+  {
+    "id": "p_013",
+    "title": "Face Mask Detection with PyTorch and TensorRT",
+    "description": "Train a face mask detector and deploy it on a Jetson board using PyTorch for training and TensorRT for fast inference.",
+    "difficulty": "Difficult",
+    "components": ["Jetson Nano", "CSI camera", "microSD card"],
+    "est_cost": 150.0,
+    "skill_tags": ["object-detection", "pytorch", "tensorrt", "mask-detection"],
+    "source_url": "https://www.electromaker.io/project/view/face-mask-detection-system-using-ai-and-nvidia-jetson-board"
+  },
+  {
+    "id": "p_014",
+    "title": "GigglyGram: Generative AI Meme Companion",
+    "description": "Uses generative AI on a Jetson to turn you into a witty conversationalist with clever comebacks and memes.",
+    "difficulty": "Moderate",
+    "components": ["Jetson Orin Nano", "camera module", "display", "microSD card"],
+    "est_cost": 520.0,
+    "skill_tags": ["generative-ai", "llm", "computer-vision", "fun"],
+    "source_url": "https://www.electromaker.io/project/view/gigglygram"
+  },
+  {
+    "id": "p_015",
+    "title": "Handwriting Recognition with an IMU Pen",
+    "description": "An IMU-equipped pen trained to recognize handwritten digits from motion data using a small neural network.",
+    "difficulty": "Difficult",
+    "components": ["Jetson Nano", "BNO055 IMU", "stylus enclosure", "microSD card"],
+    "est_cost": 170.0,
+    "skill_tags": ["tinyml", "imu", "gesture-recognition", "classification"],
+    "source_url": "https://www.electromaker.io/project/view/handwriting-recognition"
+  },
+  {
+    "id": "p_016",
+    "title": "BrowZen: Emotion-Aware Web Insights",
+    "description": "Correlates your facial emotional states with the websites you visit to give you actionable insights about your screen time.",
+    "difficulty": "Moderate",
+    "components": ["Jetson Nano", "webcam", "microSD card"],
+    "est_cost": 140.0,
+    "skill_tags": ["emotion-recognition", "computer-vision", "productivity"],
+    "source_url": "https://www.electromaker.io/project/view/browzen"
+  },
+  {
+    "id": "p_017",
+    "title": "ShAIdes: AI-Enabled Smart Glasses",
+    "description": "Wearable AI glasses that act as a transparent UI for the real world, letting you effect change in your surroundings with gestures.",
+    "difficulty": "Moderate",
+    "components": ["Jetson Nano", "camera module", "wearable frame", "battery pack"],
+    "est_cost": 200.0,
+    "skill_tags": ["wearable", "computer-vision", "gesture-control"],
+    "source_url": "https://www.electromaker.io/project/view/shaides"
+  },
+  {
+    "id": "p_018",
+    "title": "Doom Air: Play Doom with Your Body",
+    "description": "Use pose estimation on a Jetson to play Doom on a giant screen using your body as the game controller.",
+    "difficulty": "Moderate",
+    "components": ["Jetson Nano", "camera module", "large display", "microSD card"],
+    "est_cost": 200.0,
+    "skill_tags": ["pose-estimation", "gaming", "computer-vision", "fun"],
+    "source_url": "https://www.electromaker.io/project/view/doom-air"
+  },
+  {
+    "id": "p_019",
+    "title": "Artemis: Object and Person Locator Glasses",
+    "description": "An eyeglass-mounted device that locates a specific object or person and then tracks it, announcing position to the wearer.",
+    "difficulty": "Moderate",
+    "components": ["Jetson Nano", "camera module", "earpiece", "battery pack"],
+    "est_cost": 200.0,
+    "skill_tags": ["object-detection", "wearable", "tracking"],
+    "source_url": "https://www.electromaker.io/project/view/artemis"
+  },
+  {
+    "id": "p_020",
+    "title": "The Nvidianator: AI Animatronic Skull",
+    "description": "A Halloween animatronic skull that uses object detection on a Jetson to track and react to people who walk by.",
+    "difficulty": "Difficult",
+    "components": ["Jetson Nano", "camera module", "servos", "3D-printed skull"],
+    "est_cost": 300.0,
+    "skill_tags": ["object-detection", "animatronics", "servos", "fun"],
+    "source_url": "https://www.electromaker.io/project/view/the-nvidianator"
+  },
+  {
+    "id": "p_021",
+    "title": "Audio-Visual Face Mask Detection (Headless JupyterLab)",
+    "description": "A multimodal mask-recognition system that combines audio and video, run headlessly on the Jetson Nano via JupyterLab.",
+    "difficulty": "Difficult",
+    "components": ["Jetson Nano", "USB camera", "USB microphone", "microSD card"],
+    "est_cost": 160.0,
+    "skill_tags": ["multimodal", "audio", "computer-vision", "jupyter"],
+    "source_url": "https://www.electromaker.io/project/view/audio-visual-face-mask-detection-system-on-the-jetson-nano"
+  },
+  {
+    "id": "p_022",
+    "title": "Tipper: Real-Time Baseball Strike-Zone Predictor",
+    "description": "Predicts in real time whether a pitch will land inside or outside the strike zone using high-speed vision on a Jetson.",
+    "difficulty": "Difficult",
+    "components": ["Jetson Nano", "high-FPS camera", "microSD card"],
+    "est_cost": 220.0,
+    "skill_tags": ["computer-vision", "sports", "real-time", "prediction"],
+    "source_url": "https://www.electromaker.io/project/view/tipper"
+  },
+  {
+    "id": "p_023",
+    "title": "The Jetson Sisters: Assistant Robots",
+    "description": "A prototype robot assistant built on the Jetson Nano that incorporates deep-learning vision and speech tools.",
+    "difficulty": "Expert",
+    "components": ["Jetson Nano", "drive motors", "camera module", "chassis", "microphone"],
+    "est_cost": 600.0,
+    "skill_tags": ["robotics", "deep-learning", "assistant", "speech"],
+    "source_url": "https://www.electromaker.io/project/view/assistants-robots-based-on-jetson-nano-the-jetson-sisters"
+  },
+  {
+    "id": "p_024",
+    "title": "AI-Driven Interactive Lab Assistant (OpenCV + ChatGPT)",
+    "description": "Provides auto-generated lessons and guidance on lab equipment using object detection plus a conversational LLM for remote learning.",
+    "difficulty": "Expert",
+    "components": ["Jetson Nano", "camera module", "microphone", "speaker"],
+    "est_cost": 280.0,
+    "skill_tags": ["object-detection", "llm", "education", "opencv"],
+    "source_url": "https://www.electromaker.io/project/view/ai-driven-interactive-lab-assistant-w-opencv-amp-chatgpt"
+  }
+]
