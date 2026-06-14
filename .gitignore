@@ -77,6 +77,8 @@ secrets/
 credentials.json
 # API keys — never commit these
 .env
+README_PUSH.md
+push_to_github.sh
 
 # Python
 __pycache__/
